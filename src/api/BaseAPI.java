@@ -7,6 +7,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
+import utils.Util;
 
 public abstract class BaseAPI {
     Vertx vertx;
@@ -29,6 +30,8 @@ public abstract class BaseAPI {
             @Override
             public void handle(AsyncResult<Message<JsonObject>> res) {
                 api.onExecute(what,  res.result().body());
+                Util.logDebug(api.getClass().getName() + " onExecute : " + res.result().body().toString());
+
             }
         });
     }
@@ -39,6 +42,8 @@ public abstract class BaseAPI {
             @Override
             public void handle(AsyncResult<Message<JsonObject>> res) {
                 api.onExecute(what,  res.result().body());
+                Util.logDebug(api.getClass().getName() + " onExecute : " + res.result().body().toString());
+
             }
         });
 
@@ -143,7 +148,8 @@ public abstract class BaseAPI {
         });
     }
     public void sremRedis(BaseAPI api, int what,  JsonObject table){
-       vertx.eventBus().send("to.RedisVerticle.srem", table.toString(), new Handler<AsyncResult<Message<JsonObject>>>() {
+        Util.logDebug(what+" sremRedis execute");
+        vertx.eventBus().send("to.RedisVerticle.srem", table.toString(), new Handler<AsyncResult<Message<JsonObject>>>() {
 
             @Override
             public void handle(AsyncResult<Message<JsonObject>> res) {
