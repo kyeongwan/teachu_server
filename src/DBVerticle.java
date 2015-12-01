@@ -1,6 +1,4 @@
 
-
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -16,8 +14,6 @@ import java.net.URLEncoder;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Set;
-
-import com.soma.ggamtalk.dao.IQuery;
 
 /**
  * Created by cwell on 2015-10-08.
