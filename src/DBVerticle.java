@@ -23,9 +23,9 @@ public class DBVerticle extends AbstractVerticle {
 
     private void init() {
         JsonObject config = new JsonObject()
-                .put("url", "jdbc:mysql://133.130.113.101:3306/teachu?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull")
-                .put("user", "lk")
-                .put("password", "adad1313")
+                .put("url", "jdbc:mysql://localhost:3306/wraptalk?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull")
+                .put("user", "root")
+                .put("password", "1234567890")
                 .put("max_pool_size", 30);
         client = JDBCClient.createShared(vertx, config);
     }
