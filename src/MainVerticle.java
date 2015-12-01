@@ -7,6 +7,7 @@ import io.vertx.core.Verticle;
 public class MainVerticle extends AbstractVerticle {
 
     public void createVertx() {
+        vertx.deployVerticle(new RedisVerticle());
         vertx.deployVerticle(new GCMVerticle());
         vertx.deployVerticle(new ChatVerticle());
         vertx.deployVerticle(new RestVerticle());

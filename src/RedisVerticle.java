@@ -1,4 +1,5 @@
-import com.soma.ggamtalk.dao.IRedis;
+
+import dao.IRedis;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
