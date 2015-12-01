@@ -1,6 +1,5 @@
-/**
- * Created by lk on 15. 11. 23..
- */
+
+
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
@@ -12,7 +11,13 @@ import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.Set;
+
+import com.soma.ggamtalk.dao.IQuery;
 
 /**
  * Created by cwell on 2015-10-08.
@@ -23,9 +28,9 @@ public class DBVerticle extends AbstractVerticle {
 
     private void init() {
         JsonObject config = new JsonObject()
-                .put("url", "jdbc:mysql://localhost:3306/wraptalk?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull")
-                .put("user", "root")
-                .put("password", "1234567890")
+                .put("url", "jdbc:mysql://localhost:3306/teachu?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull")
+                .put("user", "lk")
+                .put("password", "adad1313")
                 .put("max_pool_size", 30);
         client = JDBCClient.createShared(vertx, config);
     }
@@ -36,13 +41,12 @@ public class DBVerticle extends AbstractVerticle {
             @Override
             public void success(SQLConnection con, Object result) {
                 JsonObject jo = new JsonObject();
-                if(result == null) {
+                if (result == null) {
                     jo.put("result_code", -1);
                     jo.put("result_msg", "insert fail");
                     reply(jo);
-                }
-                else {
-                    int count = (Integer)result;
+                } else {
+                    int count = (Integer) result;
                     jo.put("result_code", 0);
                     jo.put("result_msg", "insert success");
                     jo.put("count", count);
@@ -56,42 +60,42 @@ public class DBVerticle extends AbstractVerticle {
         Set<String> names = json.fieldNames();
         StringBuilder sbNames = new StringBuilder();
         StringBuilder sbValues = new StringBuilder();
-        for(String field : names) {
-            if(field.equals("table_name")||field.equals("question")||field.equals("token"))
+        for (String field : names) {
+            if (field.equals("table_name") || field.equals("question") || field.equals("token"))
                 continue;
 
             sbNames.append(field);
             sbNames.append(",");
 
-            if(field.indexOf("date")>-1){
+            if (field.indexOf("date") > -1) {
                 sbValues.append(json.getString(field));
                 sbValues.append(",");
-            }else{
+            } else {
                 sbValues.append("'");
                 sbValues.append(json.getString(field));
                 sbValues.append("',");
             }
         }
-        sbNames.deleteCharAt(sbNames.length()-1);
-        sbValues.deleteCharAt(sbValues.length()-1);
+        sbNames.deleteCharAt(sbNames.length() - 1);
+        sbValues.deleteCharAt(sbValues.length() - 1);
 
-        String query = String.format(json.getString("question")+" INTO %s (%s) VALUES(%s)", json.getString("table_name"), sbNames, sbValues);
+        String query = String.format(json.getString("question") + " INTO %s (%s) VALUES(%s)", json.getString("table_name"), sbNames, sbValues);
         cb.execute(query);
 
     }
+
     void insertCustomQuery(Message<String> msg) {
         IQuery cb = new IQuery(client, msg) {
 
             @Override
             public void success(SQLConnection con, Object result) {
                 JsonObject jo = new JsonObject();
-                if(result == null) {
+                if (result == null) {
                     jo.put("result_code", -1);
                     jo.put("result_msg", "insert fail");
                     reply(jo);
-                }
-                else {
-                    int count = (Integer)result;
+                } else {
+                    int count = (Integer) result;
 
                     jo.put("result_code", 0);
                     jo.put("result_msg", "insert success");
@@ -111,20 +115,20 @@ public class DBVerticle extends AbstractVerticle {
         IQuery cb = new IQuery(client, msg) {
             @Override
             public void success(SQLConnection con, Object result) {
-                ResultSet rs = (ResultSet)result;
+                ResultSet rs = (ResultSet) result;
 
-                JsonArray jsonArray =new JsonArray();
+                JsonArray jsonArray = new JsonArray();
 
-                for(int i = 0; i<rs.getNumRows(); i++){
+                for (int i = 0; i < rs.getNumRows(); i++) {
                     JsonObject jsonObject = new JsonObject();
                     JsonArray ja = rs.getResults().get(i);
 
                     int j = 0;
-                    for(String column : rs.getColumnNames()){
+                    for (String column : rs.getColumnNames()) {
                         if (ja.getValue(j) instanceof String) {
-                            jsonObject.put(column, ja.getString(j) );
-                        }else {
-                            jsonObject.put(column, ja.getLong(j) );
+                            jsonObject.put(column, ja.getString(j));
+                        } else {
+                            jsonObject.put(column, ja.getLong(j));
                         }
                         j++;
                     }
@@ -147,10 +151,10 @@ public class DBVerticle extends AbstractVerticle {
         IQuery cb = new IQuery(client, msg) {
             @Override
             public void success(SQLConnection con, Object result) {
-                ResultSet rs = (ResultSet)result;
+                ResultSet rs = (ResultSet) result;
 
                 JsonObject response = new JsonObject();
-                response.put("results",  rs.toJson() );
+                response.put("results", rs.toJson());
                 reply(response);
             }
         };
@@ -163,20 +167,20 @@ public class DBVerticle extends AbstractVerticle {
         IQuery cb = new IQuery(client, msg) {
             @Override
             public void success(SQLConnection con, Object result) {
-                ResultSet rs = (ResultSet)result;
+                ResultSet rs = (ResultSet) result;
 
-                JsonArray jsonArray =new JsonArray();
+                JsonArray jsonArray = new JsonArray();
 
-                for(int i = 0; i<rs.getNumRows(); i++){
+                for (int i = 0; i < rs.getNumRows(); i++) {
                     JsonObject jsonObject = new JsonObject();
                     JsonArray ja = rs.getResults().get(i);
 
                     int j = 0;
-                    for(String column : rs.getColumnNames()){
+                    for (String column : rs.getColumnNames()) {
                         if (ja.getValue(j) instanceof String) {
-                            jsonObject.put(column, ja.getString(j) );
-                        }else {
-                            jsonObject.put(column, ja.getLong(j) );
+                            jsonObject.put(column, ja.getString(j));
+                        } else {
+                            jsonObject.put(column, ja.getLong(j));
                         }
                         j++;
                     }
@@ -192,7 +196,7 @@ public class DBVerticle extends AbstractVerticle {
         };
 
         String str = msg.body();
-        if(str.indexOf("{") == -1) {
+        if (str.indexOf("{") == -1) {
             cb.execute(str);
             return;
         }
@@ -204,22 +208,22 @@ public class DBVerticle extends AbstractVerticle {
 
         Set<String> names = json.fieldNames();
         StringBuilder sb = new StringBuilder();
-        for(String field : names) {
-            if("table_name".equals(field))
+        for (String field : names) {
+            if ("table_name".equals(field))
                 continue;
 
-            if(sb.length() > 0)
+            if (sb.length() > 0)
                 sb.append(" AND ");
             sb.append(field);
             sb.append("=");
-            if(field.indexOf("date")>-1)
+            if (field.indexOf("date") > -1)
                 sb.append(json.getString(field));
             else
-                sb.append("'"+json.getString(field)+"'");
+                sb.append("'" + json.getString(field) + "'");
         }
         String whereStr = null;
-        if(sb.length() > 0)
-            whereStr = "WHERE "+sb.toString();
+        if (sb.length() > 0)
+            whereStr = "WHERE " + sb.toString();
 
         String query = String.format("SELECT * FROM %s %s", table, whereStr);
         cb.execute(query);
